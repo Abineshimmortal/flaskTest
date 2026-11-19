@@ -78,3 +78,61 @@ python -m flask --app app run --debug
 ```
 
 Your tasks are stored in `instance/todos.sqlite3`. Keep that file to preserve your list.
+
+## Deploy to AWS EC2 with GitHub Actions
+
+The workflow in `.github/workflows/deploy.yml` tests the app on pushes to `main`, copies the application to EC2, installs dependencies in `.venv`, and restarts the `flaskapp` systemd service.
+
+### Configure EC2 once
+
+On an Ubuntu EC2 instance:
+
+```bash
+sudo mkdir -p /opt/flask-test
+sudo chown "$USER":"$USER" /opt/flask-test
+cd /opt/flask-test
+python3 -m venv .venv
+.venv/bin/pip install --upgrade pip
+.venv/bin/pip install Flask gunicorn
+```
+
+Create `/etc/systemd/system/flaskapp.service`:
+
+```ini
+[Unit]
+Description=Flask To-Do Application
+After=network.target
+
+[Service]
+Type=simple
+User=YOUR_LINUX_USERNAME
+WorkingDirectory=/opt/flask-test
+Environment="PATH=/opt/flask-test/.venv/bin"
+ExecStart=/opt/flask-test/.venv/bin/gunicorn --bind 127.0.0.1:8000 --workers 2 app:app
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Replace `YOUR_LINUX_USERNAME` with the EC2 Linux username (usually `ubuntu`). Enable the service:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable flaskapp
+sudo systemctl start flaskapp
+```
+
+Put a web server such as Nginx or an Application Load Balancer in front of Gunicorn on port `8000`. Open port `80` or `443` in the EC2 security group, and keep SSH port `22` restricted to trusted addresses.
+
+### Configure GitHub secrets
+
+In the GitHub repository, open **Settings > Secrets and variables > Actions** and add:
+
+- `EC2_HOST`: EC2 public IP or DNS name.
+- `EC2_USERNAME`: Linux SSH username, normally `ubuntu`.
+- `EC2_SSH_KEY`: the complete private key corresponding to the EC2 key pair.
+- `EC2_APP_DIR`: `/opt/flask-test`.
+- `EC2_SSH_PORT`: optional; defaults to `22`.
+
+The GitHub Actions runner must be able to reach SSH on port `22` or the port configured by `EC2_SSH_PORT`. Push to `main` or use **Actions > Test and deploy to EC2 > Run workflow** to deploy.
