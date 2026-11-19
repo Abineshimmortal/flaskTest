@@ -38,13 +38,16 @@ py --version
 5. Install the required packages:
 
    ```powershell
-   python -m pip install --upgrade pip
-   python -m pip install -r requirements.txt
+   .\.venv\Scripts\python.exe -m pip install --upgrade pip
+   .\.venv\Scripts\python.exe -m pip install -r requirements.txt
    ```
+
+   The virtual environment path ensures these packages are installed for this project and does not depend on the global `python` command.
+
 6. Start the app:
 
    ```powershell
-   python -m flask --app app run --debug
+   .\.venv\Scripts\python.exe -m flask --app app run --debug
    ```
 7. Open [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser.
 8. Add tasks in the box. Use **Done** to mark a task complete and **Undo** to reopen it; use **Delete** to remove a task.
@@ -62,6 +65,12 @@ Run these from the project folder instead of activating the environment:
 ## Start the app later
 
 Open PowerShell, go to the project folder, and run:
+
+```powershell
+.\.venv\Scripts\python.exe -m flask --app app run --debug
+```
+
+Alternatively, activate the environment and use `python`:
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
