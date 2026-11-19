@@ -1,6 +1,6 @@
-# Flask Test
+# Flask To-Do List
 
-A small Flask app that displays a welcome page at `http://127.0.0.1:5000`.
+A small Flask app for adding tasks, marking them complete, and deleting them. Tasks are saved in a local SQLite database at `instance/todos.sqlite3`, so they remain after you stop and restart the app.
 
 ## Requirements
 
@@ -9,23 +9,23 @@ A small Flask app that displays a welcome page at `http://127.0.0.1:5000`.
 
 If Python is not installed, install it from [python.org](https://www.python.org/downloads/windows/). In the installer, enable **Add python.exe to PATH**. Close and reopen PowerShell after installation.
 
-To check that Python is available, run:
+Check Python is available:
 
 ```powershell
 py --version
 ```
 
-## Run the app (PowerShell)
+## First-time setup and run (PowerShell)
 
 1. Open PowerShell.
-2. Change to the project folder:
+2. Go to the project folder:
 
    ```powershell
    cd "$HOME\OneDrive\Documents\GitHub\flaskTest"
    ```
 
-   If your project is stored elsewhere, replace that path with its location.
-3. Create a virtual environment (you only need to do this once):
+   If you saved the project somewhere else, use that folder path instead.
+3. Create a virtual environment. You only need to do this once:
 
    ```powershell
    py -m venv .venv
@@ -35,31 +35,37 @@ py --version
    ```powershell
    .\.venv\Scripts\Activate.ps1
    ```
-
-   If PowerShell says script execution is disabled, you can skip activation and use the direct commands shown under **PowerShell activation alternative** below.
-5. Install Flask (first run, and whenever dependencies change):
+5. Install the required packages:
 
    ```powershell
    python -m pip install --upgrade pip
    python -m pip install -r requirements.txt
    ```
-6. Start the development server:
+6. Start the app:
 
    ```powershell
    python -m flask --app app run --debug
    ```
 7. Open [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser.
-8. To stop the server, return to PowerShell and press **Ctrl+C**.
+8. Add tasks in the box. Use **Done** to mark a task complete and **Undo** to reopen it; use **Delete** to remove a task.
+9. To stop the app, return to PowerShell and press **Ctrl+C**.
 
-## PowerShell activation alternative
+## If PowerShell blocks activation
 
-If activation is blocked, run these commands from the project folder instead. They use the virtual environment's Python directly:
+Run these from the project folder instead of activating the environment:
 
 ```powershell
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe -m flask --app app run --debug
 ```
 
-## Run it again later
+## Start the app later
 
-Open PowerShell, change to the project folder, activate the environment with `\.venv\Scripts\Activate.ps1`, then start the server with `python -m flask --app app run --debug`. Flask is already installed in the virtual environment, so you do not need to install it again.
+Open PowerShell, go to the project folder, and run:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+python -m flask --app app run --debug
+```
+
+Your tasks are stored in `instance/todos.sqlite3`. Keep that file to preserve your list.
